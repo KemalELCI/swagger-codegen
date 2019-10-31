@@ -87,9 +87,17 @@ public class TypeScriptLinquestClientCodegen extends AbstractTypeScriptClientCod
         List<CodegenOperation> operationList = (List<CodegenOperation>) operations.get("operation");
         for (CodegenOperation op : operationList) {
             for (CodegenParameter param : op.allParams) {
-                if (!param.isPrimitiveType && !param.isListContainer 
-                        && !param.dataType.equals("any") && !param.dataType.equals("string")) {
+                if (!param.isPrimitiveType && !param.isListContainer && !param.dataType.equals("any")
+                        && !param.dataType.equals("string")) {
                     modelImports.add(param.dataType);
+                }
+
+                if (param.isListContainer) {
+                    String typeName = param.dataType;
+                    typeName = typeName.replaceAll("Array", "").replaceAll("<", "").replaceAll(">", "");
+                    if (typeName.trim().length() > 0) {
+                        modelImports.add(typeName);
+                    }
                 }
             }
             if (op.returnBaseType != null && !op.returnTypeIsPrimitive) {
